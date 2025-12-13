@@ -1,0 +1,137 @@
+#include "../include/users.hpp"
+
+addrUser createUserNode(string username, string password) {
+    addrUser P = new UserNode;
+    P->info.username = username;
+    P->info.password = password;
+
+    // default value
+    P->info.bio = "";
+    P->info.totalLikes = 0;
+    for (int i = 0; i < 3; i++) {
+        P->info.interests[i] = "";
+    }
+
+    P->left = nullptr;
+    P->right = nullptr;
+    P->firstPost = nullptr;
+
+    return P;
+}
+
+addrUser searchUser(addrUser root, string username) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    if (username == root->info.username) {
+        return root;
+    } else if (username < root->info.username) {
+        return searchUser(root->left, username);
+    } else {
+        return searchUser(root->right, username);
+    }
+}
+
+addrUser insertUser(addrUser root, addrUser newUser) {
+    if (root == nullptr) {
+        return newUser;
+    }
+
+    if (newUser->info.username < root->info.username) {
+        root->left = insertUser(root->left, newUser);
+    } else if (newUser->info.username > root->info.username) {
+        root->right = insertUser(root->right, newUser);
+    }
+    // username sama → tidak dimasukkan (opsional)
+    return root;
+}
+
+addrUser findMinUser(addrUser root) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    while (root->left != nullptr) {
+        root = root->left;
+    }
+
+    return root;
+}
+
+addrUser findMaxUser(addrUser root) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    while (root->right != nullptr) {
+        root = root->right;
+    }
+    return root;
+}
+
+addrUser deleteUser(addrUser root, string username) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    if (username < root->info.username) {
+        root->left = deleteUser(root->left, username);
+    }
+    else if (username > root->info.username) {
+        root->right = deleteUser(root->right, username);
+    }
+    else {
+        
+        //Node ditemukan 
+
+        // CASE 1: Leaf
+        if (root->left == nullptr && root->right == nullptr) {
+            delete root;
+            return nullptr;
+        }
+
+        // CASE 2: Satu Child (Right)
+        if (root->left == nullptr) {
+            addrUser temp = root->right;
+            delete root;
+            return temp;
+        }
+
+        // CASE 2: Satu Child (Left)
+        if (root->right == nullptr) {
+            addrUser temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        // CASE 3: Dua Child (Copy-successor)
+        addrUser succ = findMinUser(root->right);
+
+        root->info.username     = succ->info.username;
+        root->info.password     = succ->info.password;
+        root->info.bio          = succ->info.bio;
+        root->info.totalLikes   = succ->info.totalLikes;
+        for (int i = 0; i < 3; i++) {
+            root->info.interests[i] = succ->info.interests[i];
+        }
+        root->firstPost = succ->firstPost;
+
+        root->right = deleteUser(root->right, succ->info.username);
+    }
+
+    return root;
+}
+
+int countUsers(addrUser root) {
+    if (root == nullptr) return 0;
+    return 1 + countUsers(root->left) + countUsers(root->right);
+}
+
+void inorderUsers(addrUser root) {
+    if (root != nullptr) {
+        inorderUsers(root->left);
+        cout << root->info.username << " ";
+        inorderUsers(root->right);
+    }
+}
