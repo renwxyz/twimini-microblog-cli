@@ -1,4 +1,4 @@
-#include "../include/posts.hpp"
+#include "../include/post.hpp"
 
 addrPost createPost(string content) {
     addrPost P = new PostNode;
