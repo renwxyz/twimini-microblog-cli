@@ -3,12 +3,40 @@
 #include "./include/posts.hpp"
 using namespace std;
 
+void menuTimeLine(addrUser rootUser) {
+    int timelineChoice;
+    
+    do {
+        cout << "\n=== TIMELINE GLOBAL ===\n";
+        if (rootUser == NULL || rootUser->firstPost == NULL) {
+            cout << "Timeline masih kosong. Belum ada postingan." << endl;
+            break;
+        } else {
+            showTimeline(rootUser);
+        }
 
-void menuTimeLine(addrUser currentUser) {
-    cout << "\n=== TIMELINE GLOBAL ===\n";
+        cout << "1. Like\n";
+        cout << "0. Kembali\n";
+        cout << "Pilih: ";
+        cin >> timelineChoice;
+
+        switch (timelineChoice) {
+            case 1:
+                int postId;
+                cout << "Masukkan ID post yang ingin di-like: ";
+                cin >> postId;
+                likePost(rootUser, postId);
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+        }
+    } while (timelineChoice != 0);
+
 }
 
-void menuUser(addrUser currentUser) {
+void menuUser(addrUser currentUser, addrUser rootUser) {
     int postChoice;
 
     do {
@@ -39,11 +67,12 @@ void menuUser(addrUser currentUser) {
             }
 
             case 2:
+                cout << "\n=== Postingan saya ===\n";
                 printPosts(currentUser);
                 break;
             
             case 3:
-                menuTimeLine(currentUser);
+                menuTimeLine(rootUser);
                 break;
             
             case 4: {
@@ -91,7 +120,7 @@ int main() {
             case 2:
                 currentUser = loginUser(root);
                 if (currentUser != NULL) {
-                    menuUser(currentUser);
+                    menuUser(currentUser, root);
                 }
                 break;
 

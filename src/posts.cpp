@@ -118,7 +118,8 @@ void printPosts(addrUser user) {
 
     while (P != NULL) {
         tm *t = localtime(&P->info.timestamp);
-        cout << "------------------------\n";
+
+        cout << "================================\n";
         cout << "ID     : " << P->info.postId << endl;
         cout << "Isi    : " << P->info.content << endl;
         cout << "Like   : " << P->info.likes << endl;
@@ -129,6 +130,7 @@ void printPosts(addrUser user) {
         P = P->next;
     }
 }
+
 
 int generatePostId() {
     static int counter = 1;

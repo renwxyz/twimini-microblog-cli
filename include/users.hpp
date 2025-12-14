@@ -35,5 +35,7 @@ addrUser findMaxUser(addrUser root);
 
 int countUsers(addrUser root);
 void inorderUsers(addrUser root);
+void showTimeline(addrUser root);
+bool likePost(addrUser root, int postId);
 
 #endif
