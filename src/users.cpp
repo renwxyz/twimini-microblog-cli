@@ -1,4 +1,5 @@
 #include "../include/users.hpp"
+#include "../include/post.hpp"
 
 addrUser createUserNode(string username, string password) {
     addrUser P = new UserNode;
@@ -134,4 +135,29 @@ void inorderUsers(addrUser root) {
         cout << root->info.username << " ";
         inorderUsers(root->right);
     }
+}
+
+void showTimeline(addrUser root) {
+    if (root == NULL) return;
+
+    // inorder traversal BST
+    showTimeline(root->left);
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        tm *t = localtime(&P->info.timestamp);
+
+        cout << "================================\n";
+        cout << "User   : " << root->info.username << endl;
+        cout << "PostID : " << P->info.postId << endl;
+        cout << "Isi    : " << P->info.content << endl;
+        cout << "Like   : " << P->info.likes << endl;
+        cout << "Waktu  : "
+             << setw(2) << setfill('0') << t->tm_hour << ":"
+             << setw(2) << setfill('0') << t->tm_min << endl;
+
+        P = P->next;
+    }
+    
+    showTimeline(root->right);
 }
