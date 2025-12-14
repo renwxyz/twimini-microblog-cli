@@ -1,14 +1,21 @@
 #include <iostream>
 #include "./include/auth.hpp"
-#include "./include/posts.hpp"
+#include "./include/post.hpp"
 using namespace std;
 
 
-void menuTimeLine(addrUser currentUser) {
+void menuTimeLine(addrUser root) {
     cout << "\n=== TIMELINE GLOBAL ===\n";
+    
+    if (root == NULL) {
+        cout << "Belum ada user.\n";
+        return;
+    }
+
+    showTimeline(root);
 }
 
-void menuUser(addrUser currentUser) {
+void menuUser(addrUser currentUser, addrUser root) {
     int postChoice;
 
     do {
@@ -43,7 +50,7 @@ void menuUser(addrUser currentUser) {
                 break;
             
             case 3:
-                menuTimeLine(currentUser);
+                menuTimeLine(root);
                 break;
             
             case 4: {
@@ -91,7 +98,7 @@ int main() {
             case 2:
                 currentUser = loginUser(root);
                 if (currentUser != NULL) {
-                    menuUser(currentUser);
+                    menuUser(currentUser, root);
                 }
                 break;
 
