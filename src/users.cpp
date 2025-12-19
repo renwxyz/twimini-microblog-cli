@@ -1,4 +1,5 @@
 #include "../include/users.hpp"
+#include "../include/posts.hpp"
 
 addrUser createUserNode(string username, string password) {
     addrUser P = new UserNode;
@@ -135,3 +136,57 @@ void inorderUsers(addrUser root) {
         inorderUsers(root->right);
     }
 }
+
+void showTimeline(addrUser root) {
+    if (root == NULL) {
+        return;
+    }
+
+    showTimeline(root->left);
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        tm *t = localtime(&P->info.timestamp);
+
+        cout << "================================\n";
+        cout << "User   : " << root->info.username << endl;
+        cout << "PostID : " << P->info.postId << endl;
+        cout << "Isi    : " << P->info.content << endl;
+        cout << "Like   : " << P->info.likes << endl;
+        cout << "Waktu  : "
+             << t->tm_hour << ":"
+             << t->tm_min << endl;
+
+        P = P->next;
+    }
+    
+    showTimeline(root->right);
+}
+
+bool likePost(addrUser root, int postId) {
+    if (root == NULL) return false;
+
+    // cari di subtree kiri
+    if (likePost(root->left, postId)){
+        return true;
+    }
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        if (P->info.postId == postId) {
+            P->info.likes++;
+
+            root->info.totalLikes++;
+
+            cout << "Post ID " << postId << " berhasil di-like." << endl;
+            cout << "Total like sekarang: " << P->info.likes << endl;
+            return true;
+        }
+        P = P->next;
+    }
+
+    // cari di subtree kanan
+    return likePost(root->right, postId);
+}
+
+
