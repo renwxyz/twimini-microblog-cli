@@ -38,6 +38,8 @@ void updatePost(addrUser user) {
         return;
     }
 
+    printPosts(user);
+
     cout << "Masukkan ID post yang ingin diedit : ";
     cin >> id;
     cin.ignore();
@@ -70,6 +72,8 @@ void deletePost(addrUser user) {
         cout << "Belum ada postingan.\n";
         return;
     }
+    
+    printPosts(user);
 
     cout << "Masukkan ID post yang ingin dihapus : ";
     cin >> id;

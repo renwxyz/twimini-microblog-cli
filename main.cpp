@@ -76,11 +76,13 @@ void menuUser(addrUser currentUser, addrUser rootUser) {
                 break;
             
             case 4: {
+                cout << "\n=== Edit Post ===\n";
                 updatePost(currentUser);
                 break;
             }
 
             case 5: {
+                cout << "\n=== Hapus Post ===\n";
                 deletePost(currentUser);
                 break;
             }
