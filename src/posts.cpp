@@ -7,7 +7,6 @@ addrPost createPost(string content) {
     P->info.likes = 0;
     P->info.timestamp = time(NULL);
     P->next = NULL;
-    P->prev = NULL;
     return P;
 }
 
@@ -24,7 +23,6 @@ void insertPost(addrUser user, addrPost newPost) {
             P = P->next;
         }
         P->next = newPost;
-        newPost->prev = P;
     }
 }
 
@@ -61,7 +59,6 @@ void updatePost(addrUser user) {
     }
 }
 
-
 void deletePost(addrUser user) {
     int id;
     bool ketemu = false;
@@ -74,36 +71,33 @@ void deletePost(addrUser user) {
     cout << "Masukkan ID post yang ingin dihapus : ";
     cin >> id;
 
-    addrPost P = user->firstPost;
+    addrPost curr = user->firstPost;
+    addrPost prev = NULL;
 
-    while (P != NULL) {
-        if (P->info.postId == id) {
+    while (curr != NULL) {
+        if (curr->info.postId == id) {
 
-            if (P == user->firstPost) {
-                user->firstPost = P->next;
-                if (user->firstPost != NULL) {
-                    user->firstPost->prev = NULL;
-                }
+            if (prev == NULL) {
+                user->firstPost = curr->next;
             } else {
-                P->prev->next = P->next;
-                if (P->next != NULL) {
-                    P->next->prev = P->prev;
-                }
+                prev->next = curr->next;
             }
 
-            delete P;
-
+            delete curr;
             cout << "Postingan berhasil dihapus.\n";
             ketemu = true;
             break;
         }
-        P = P->next;
+
+        prev = curr;
+        curr = curr->next;
     }
 
     if (!ketemu) {
         cout << "Tidak ada postingan dengan ID " << id << ".\n";
     }
 }
+
 
 void printPosts(addrUser user) {
     if (user == NULL) {
