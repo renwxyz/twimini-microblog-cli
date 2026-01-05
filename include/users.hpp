@@ -25,7 +25,6 @@ struct UserNode {
 };
 
 // Create
-
 addrUser createUserNode(string username, string password);
 addrUser insertUser(addrUser root, addrUser newNode);
 

@@ -1,6 +1,8 @@
 #include <iostream>
 #include "./include/auth.hpp"
 #include "./include/posts.hpp"
+#include "./include/admin.hpp"
+
 using namespace std;
 
 void menuTimeLine(addrUser rootUser) {
@@ -8,7 +10,7 @@ void menuTimeLine(addrUser rootUser) {
     
     do {
         cout << "\n=== TIMELINE GLOBAL ===\n";
-        if (rootUser == NULL || rootUser->firstPost == NULL) {
+        if (rootUser == NULL) {
             cout << "Timeline masih kosong. Belum ada postingan." << endl;
             break;
         } else {
@@ -58,6 +60,8 @@ void menuUser(addrUser currentUser, addrUser rootUser) {
                 string content;
                 cin.ignore();
 
+                system("cls");
+                cout << "=== Buat Postingan ===\n";
                 cout << "Masukkan Isi Post: ";
                 getline(cin, content);
 
@@ -232,7 +236,7 @@ void menuUser(addrUser currentUser, addrUser rootUser) {
                                         cout << "Kembali...\n";
                                         break;
                                     default:
-                                        cout << "Pilihan tidak falid.\n";
+                                        cout << "Pilihan tidak valid.\n";
                                 }
                             } while(option != 0);
 
@@ -242,7 +246,7 @@ void menuUser(addrUser currentUser, addrUser rootUser) {
                             cout << "Kembali...\n";
                             break;
                         default:
-                            cout << "Pilihan tidak falid.\n";
+                            cout << "Pilihan tidak valid.\n";
                     }
                 } while(postOption != 0);
                 break;
@@ -260,6 +264,48 @@ void menuUser(addrUser currentUser, addrUser rootUser) {
 
 }
 
+void menuAdmin(addrUser rootUser){
+    int adminChoice;
+
+    do {
+        cout << "\n===== DASHBOARD ADMIN =====\n";
+        cout << "Total User        : " << countUsers(rootUser) << endl;
+        cout << "Total Post        : " << countTotalPosts(rootUser) << endl;
+        cout << endl;
+
+        cout << "Statistik Postingan:\n";
+        cout << "----------------------";
+        minPostLike(rootUser);
+        maxPostLike(rootUser);
+
+        cout << "\n=== MENU ADMIN ===\n";
+        cout << "1. Hapus User\n";
+        cout << "0. Logout\n";
+        cout << "Pilih: ";
+        cin >> adminChoice;
+
+        switch (adminChoice) {
+            case 1: {
+                cout << "Masukkan username yang akan dihapus: ";
+                string usernameHapus;
+                cin >> usernameHapus;
+                if (deleteUser(rootUser, usernameHapus)) {
+                    cout << "User berhasil dihapus.\n";
+                } else {
+                    cout << "User tidak ditemukan.\n";
+                }
+                break;
+            }
+            case 0:
+                cout << "Logout berhasil.\n";
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+        }
+
+    } while (adminChoice != 0);
+}
+
 int main() {
     addrUser root = NULL;
     addrUser currentUser = NULL;
@@ -267,23 +313,31 @@ int main() {
     int choice;
 
     do {
-        cout << "\n=== TEST REGISTER & LOGIN ===\n";
+        system("cls");
+        cout << "\n=== REGISTER & LOGIN ===\n";
         cout << "1. Register\n";
         cout << "2. Login\n";
-        cout << "3. Lihat jumlah user (test)\n";
         cout << "0. Keluar\n";
         cout << "Pilih: ";
         cin >> choice;
 
         switch (choice) {
             case 1:
+                system("cls");
                 registerUser(root);
                 break;
 
             case 2:
+
                 currentUser = loginUser(root);
                 if (currentUser != NULL) {
-                    menuUser(currentUser, root);
+                    if (currentUser->info.username == "admin") {
+                        system("cls");
+                        menuAdmin(root);
+                    } else {
+                        system("cls");
+                        menuUser(currentUser, root);
+                    }
                 }
                 break;
 
