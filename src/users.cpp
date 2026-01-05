@@ -91,8 +91,6 @@ void printUserProfile(addrUser userNode){
     cout << endl;
 }
 
-
-
 void inorderUsers(addrUser root) {
     if (root != nullptr) {
         inorderUsers(root->left);
@@ -125,12 +123,6 @@ void showTimeline(addrUser root) {
     }
     
     showTimeline(root->right);
-}
-
-
-int countUsers(addrUser root) {
-    if (root == nullptr) return 0;
-    return 1 + countUsers(root->left) + countUsers(root->right);
 }
 
 bool updatePassword(addrUser userNode, string newPassword, string confirm) {
