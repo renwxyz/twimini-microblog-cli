@@ -7,7 +7,6 @@ addrPost createPost(string content) {
     P->info.likes = 0;
     P->info.timestamp = time(NULL);
     P->next = NULL;
-    P->prev = NULL;
     return P;
 }
 
@@ -24,7 +23,6 @@ void insertPost(addrUser user, addrPost newPost) {
             P = P->next;
         }
         P->next = newPost;
-        newPost->prev = P;
     }
 }
 
@@ -61,6 +59,31 @@ void updatePost(addrUser user) {
     }
 }
 
+bool likePost(addrUser root, int postId) {
+    if (root == NULL) return false;
+
+    // cari di subtree kiri
+    if (likePost(root->left, postId)){
+        return true;
+    }
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        if (P->info.postId == postId) {
+            P->info.likes++;
+
+            root->info.totalLikes++;
+
+            cout << "Post ID " << postId << " berhasil di-like." << endl;
+            cout << "Total like sekarang: " << P->info.likes << endl;
+            return true;
+        }
+        P = P->next;
+    }
+
+    // cari di subtree kanan
+    return likePost(root->right, postId);
+}
 
 void deletePost(addrUser user) {
     int id;
@@ -74,36 +97,33 @@ void deletePost(addrUser user) {
     cout << "Masukkan ID post yang ingin dihapus : ";
     cin >> id;
 
-    addrPost P = user->firstPost;
+    addrPost curr = user->firstPost;
+    addrPost prev = NULL;
 
-    while (P != NULL) {
-        if (P->info.postId == id) {
+    while (curr != NULL) {
+        if (curr->info.postId == id) {
 
-            if (P == user->firstPost) {
-                user->firstPost = P->next;
-                if (user->firstPost != NULL) {
-                    user->firstPost->prev = NULL;
-                }
+            if (prev == NULL) {
+                user->firstPost = curr->next;
             } else {
-                P->prev->next = P->next;
-                if (P->next != NULL) {
-                    P->next->prev = P->prev;
-                }
+                prev->next = curr->next;
             }
 
-            delete P;
-
+            delete curr;
             cout << "Postingan berhasil dihapus.\n";
             ketemu = true;
             break;
         }
-        P = P->next;
+
+        prev = curr;
+        curr = curr->next;
     }
 
     if (!ketemu) {
         cout << "Tidak ada postingan dengan ID " << id << ".\n";
     }
 }
+
 
 void printPosts(addrUser user) {
     if (user == NULL) {
@@ -119,7 +139,7 @@ void printPosts(addrUser user) {
     while (P != NULL) {
         tm *t = localtime(&P->info.timestamp);
 
-        cout << "================================\n";
+        cout << "=======================\n";
         cout << "ID     : " << P->info.postId << endl;
         cout << "Isi    : " << P->info.content << endl;
         cout << "Like   : " << P->info.likes << endl;

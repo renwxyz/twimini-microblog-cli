@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "users.hpp"
-#include <ctime>        // untuk time_t
+#include <ctime>       
 using namespace std;
 
 struct Post {
@@ -18,15 +18,23 @@ typedef struct PostNode* addrPost;
 struct PostNode {
     Post info;          // data postingan
     addrPost next;      // post berikutnya (N)
-    addrPost prev;      // post sebelumnya (P)
 };
 
+// Create
 addrPost createPost(string content);
 void insertPost(addrUser user, addrPost newPost);
-void updatePost(addrUser user);
-void deletePost(addrUser user);
-void printPosts(addrUser user);
 int generatePostId();
+
+// Read
+void printPosts(addrUser user);
+
+// Update
+void updatePost(addrUser user);
+bool likePost(addrUser root, int postId);
+
+// Delete
+void deletePost(addrUser user);
+
 
 
 #endif
