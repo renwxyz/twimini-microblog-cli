@@ -20,20 +20,6 @@ addrUser createUserNode(string username, string password) {
     return P;
 }
 
-addrUser searchUser(addrUser root, string username) {
-    if (root == nullptr) {
-        return nullptr;
-    }
-
-    if (username == root->info.username) {
-        return root;
-    } else if (username < root->info.username) {
-        return searchUser(root->left, username);
-    } else {
-        return searchUser(root->right, username);
-    }
-}
-
 addrUser insertUser(addrUser root, addrUser newUser) {
     if (root == nullptr) {
         return newUser;
@@ -46,6 +32,20 @@ addrUser insertUser(addrUser root, addrUser newUser) {
     }
     // username sama → tidak dimasukkan (opsional)
     return root;
+}
+
+addrUser searchUser(addrUser root, string username) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    if (username == root->info.username) {
+        return root;
+    } else if (username < root->info.username) {
+        return searchUser(root->left, username);
+    } else {
+        return searchUser(root->right, username);
+    }
 }
 
 addrUser findMinUser(addrUser root) {
@@ -69,6 +69,101 @@ addrUser findMaxUser(addrUser root) {
         root = root->right;
     }
     return root;
+}
+
+
+void printUserProfile(addrUser userNode){
+    if (userNode == NULL){
+        cout << "User tidak valid \n";
+        return;
+    }
+
+    cout << "\n=== Profil User - " << userNode->info.username << " ===\n";
+    cout << "Username : " << userNode->info.username << endl;
+    cout << "Bio      : " << userNode->info.bio << endl;
+    cout << "Likes    : " << userNode->info.totalLikes << endl;
+
+    cout << "Interests: ";
+    for (int i = 0; i < 3; i++) {
+        cout << userNode->info.interests[i];
+        if (i < 2) cout << ", ";
+    }
+    cout << endl;
+}
+
+
+
+void inorderUsers(addrUser root) {
+    if (root != nullptr) {
+        inorderUsers(root->left);
+        cout << root->info.username << " ";
+        inorderUsers(root->right);
+    }
+}
+
+void showTimeline(addrUser root) {
+    if (root == NULL) {
+        return;
+    }
+
+    showTimeline(root->left);
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        tm *t = localtime(&P->info.timestamp);
+
+        cout << "================================\n";
+        cout << "User   : " << root->info.username << endl;
+        cout << "PostID : " << P->info.postId << endl;
+        cout << "Isi    : " << P->info.content << endl;
+        cout << "Like   : " << P->info.likes << endl;
+        cout << "Waktu  : "
+             << t->tm_hour << ":"
+             << t->tm_min << endl;
+
+        P = P->next;
+    }
+    
+    showTimeline(root->right);
+}
+
+
+int countUsers(addrUser root) {
+    if (root == nullptr) return 0;
+    return 1 + countUsers(root->left) + countUsers(root->right);
+}
+
+bool updatePassword(addrUser userNode, string newPassword, string confirm) {
+    if (newPassword == confirm){
+        userNode->info.password = newPassword;
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+bool updateBio(addrUser userNode, string newBio){
+    userNode->info.bio = newBio;
+    if (userNode->info.bio == newBio){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool updateInterest(addrUser userNode, string newInterest[3]){
+    for (int i = 0; i<3; i++){
+        userNode->info.interests[i] = newInterest[i];
+    }
+
+    for (int i = 0; i<3; i++){
+        if (userNode->info.interests[i] != newInterest[i]){
+            return false;
+        }
+    }
+
+    return true;
 }
 
 addrUser deleteUser(addrUser root, string username) {
@@ -123,70 +218,3 @@ addrUser deleteUser(addrUser root, string username) {
 
     return root;
 }
-
-int countUsers(addrUser root) {
-    if (root == nullptr) return 0;
-    return 1 + countUsers(root->left) + countUsers(root->right);
-}
-
-void inorderUsers(addrUser root) {
-    if (root != nullptr) {
-        inorderUsers(root->left);
-        cout << root->info.username << " ";
-        inorderUsers(root->right);
-    }
-}
-
-void showTimeline(addrUser root) {
-    if (root == NULL) {
-        return;
-    }
-
-    showTimeline(root->left);
-
-    addrPost P = root->firstPost;
-    while (P != NULL) {
-        tm *t = localtime(&P->info.timestamp);
-
-        cout << "================================\n";
-        cout << "User   : " << root->info.username << endl;
-        cout << "PostID : " << P->info.postId << endl;
-        cout << "Isi    : " << P->info.content << endl;
-        cout << "Like   : " << P->info.likes << endl;
-        cout << "Waktu  : "
-             << t->tm_hour << ":"
-             << t->tm_min << endl;
-
-        P = P->next;
-    }
-    
-    showTimeline(root->right);
-}
-
-bool likePost(addrUser root, int postId) {
-    if (root == NULL) return false;
-
-    // cari di subtree kiri
-    if (likePost(root->left, postId)){
-        return true;
-    }
-
-    addrPost P = root->firstPost;
-    while (P != NULL) {
-        if (P->info.postId == postId) {
-            P->info.likes++;
-
-            root->info.totalLikes++;
-
-            cout << "Post ID " << postId << " berhasil di-like." << endl;
-            cout << "Total like sekarang: " << P->info.likes << endl;
-            return true;
-        }
-        P = P->next;
-    }
-
-    // cari di subtree kanan
-    return likePost(root->right, postId);
-}
-
-

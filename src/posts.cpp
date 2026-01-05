@@ -59,6 +59,32 @@ void updatePost(addrUser user) {
     }
 }
 
+bool likePost(addrUser root, int postId) {
+    if (root == NULL) return false;
+
+    // cari di subtree kiri
+    if (likePost(root->left, postId)){
+        return true;
+    }
+
+    addrPost P = root->firstPost;
+    while (P != NULL) {
+        if (P->info.postId == postId) {
+            P->info.likes++;
+
+            root->info.totalLikes++;
+
+            cout << "Post ID " << postId << " berhasil di-like." << endl;
+            cout << "Total like sekarang: " << P->info.likes << endl;
+            return true;
+        }
+        P = P->next;
+    }
+
+    // cari di subtree kanan
+    return likePost(root->right, postId);
+}
+
 void deletePost(addrUser user) {
     int id;
     bool ketemu = false;
@@ -113,7 +139,7 @@ void printPosts(addrUser user) {
     while (P != NULL) {
         tm *t = localtime(&P->info.timestamp);
 
-        cout << "================================\n";
+        cout << "=======================\n";
         cout << "ID     : " << P->info.postId << endl;
         cout << "Isi    : " << P->info.content << endl;
         cout << "Like   : " << P->info.likes << endl;

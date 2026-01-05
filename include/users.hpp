@@ -15,7 +15,6 @@ struct User {
     int totalLikes;   
 };
 
-
 typedef struct UserNode* addrUser;
 
 struct UserNode {
@@ -25,17 +24,27 @@ struct UserNode {
     PostNode* firstPost;     // Multi Linked List 1-N
 };
 
+// Create
+
 addrUser createUserNode(string username, string password);
 addrUser insertUser(addrUser root, addrUser newNode);
-addrUser searchUser(addrUser root, string username);
-addrUser deleteUser(addrUser root, string username);
 
+// Read
+addrUser searchUser(addrUser root, string username);
 addrUser findMinUser(addrUser root);
 addrUser findMaxUser(addrUser root);
 
-int countUsers(addrUser root);
+void printUserProfile(addrUser userNode);
 void inorderUsers(addrUser root);
 void showTimeline(addrUser root);
-bool likePost(addrUser root, int postId);
+int countUsers(addrUser root);
+
+// Update
+bool updatePassword(addrUser userNode, string newPassword, string confirm);
+bool updateBio(addrUser userNode, string newBio);
+bool updateInterest(addrUser userNode, string newInterests[3]);
+
+// Delete
+addrUser deleteUser(addrUser root, string username);
 
 #endif
